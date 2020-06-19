@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Sudoku.h"
 
 namespace Ui {
 class MainWindow;
@@ -20,6 +21,8 @@ public slots:
 
 private:
     Ui::MainWindow *ui;
+
+    Sudoku* s;
 };
 
 #endif // MAINWINDOW_H

@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "Sudoku.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -7,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     QObject::connect(ui->actionNeu, SIGNAL(triggered(bool)), this, SLOT(resetField()));
+    s = new Sudoku();
 }
 
 MainWindow::~MainWindow()
@@ -17,4 +20,5 @@ MainWindow::~MainWindow()
 void MainWindow::resetField()
 {
     printf("Hi\n");
+    s->reset();
 }
