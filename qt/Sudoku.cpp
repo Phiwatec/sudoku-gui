@@ -84,7 +84,7 @@ void Sudoku::childSkip(int anz)
 {
     for(int i = 0;i<anz;i++)
     {
-        childRead(0);
+        childRead(1);
     }
 }
 
