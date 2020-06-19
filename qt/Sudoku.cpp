@@ -11,9 +11,7 @@ Sudoku::Sudoku()
 
 Sudoku::~Sudoku()
 {
-    free(command[0]);
-    free(command[1]);
-    free(command);
+    killChild();
 }
 
 void Sudoku::reset()
@@ -23,7 +21,14 @@ void Sudoku::reset()
         killChild();
     }
     callExec();
-    childSkip(116);     //welcome message
+    childSkip(309);     //welcome message + empty field
+    //test
+    printf("field\n");
+    setNr('1','1','3');
+    printf("field\n");
+    setNr('9','9','9');
+    printf("field\n");
+    setNr('2','1','2');
 }
 
 char Sudoku::getNr(char x, char y)
@@ -38,25 +43,37 @@ void Sudoku::setNr(char x, char y, char n)
         reset();
     }
     childWrite(x, y, n);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    childSkip(6);
     for(char i = 0;i<9;i++)
     {
         for(char j = 0;j<9;j++)
         {
-            field[x][y] = childRead();
-            if(j>0 && j%3 == 0)
+            field[x][y] = childRead(1);
+            childSkip(1);
+            if(j%3==2)
             {
                 childSkip(1);
             }
         }
+        if(i%3==2)
+        {
+            childSkip(1);
+        }
     }
+    childSkip(1);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }
 
-char Sudoku::childRead()
+char Sudoku::childRead(char print)
 {
     char c;
     while(read(fromChild, &c, 1)==0);
 #ifdef DBG
+    if(print)
+    {
     write(STDOUT_FILENO, &c, 1);
+    }
 #endif
     return c;
 }
@@ -65,29 +82,39 @@ void Sudoku::childSkip(int anz)
 {
     for(int i = 0;i<anz;i++)
     {
-        childRead();
+        childRead(0);
     }
 }
 
-void Sudoku::childWrite(char c)
+void Sudoku::childWrite(char* c, int len)
 {
-    write(toChild, &c, 1);
+    write(toChild, c, len);
 }
 
 void Sudoku::childWrite(char x, char y, char n)
 {
-    childWrite(x);
-    childWrite(x);
-    childWrite(y);
-    childWrite(y);
-    childWrite(n);
-    childWrite('\n');
+    char* word = (char*)malloc(sizeof(char)*6);
+    word[0] = x;
+    word[1] = x;
+    word[2] = y;
+    word[3] = y;
+    word[4] = n;
+    word[5] = '\n';
+    childWrite(word, 6);
+    free(word);
 }
 
 void Sudoku::killChild()
 {
-    system("killall sudoku");
+    char* x = "x\n";
+    childWrite(x,2);
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    system("pkill -9 sudoku");
+    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    system("pkill -9 sudoku");
     childRunning = 0;
+    close(toChild);
+    close(fromChild);
 }
 
 int Sudoku::callExec()

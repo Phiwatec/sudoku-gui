@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete s;
 }
 
 void MainWindow::resetField()

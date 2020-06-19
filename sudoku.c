@@ -12,7 +12,7 @@ int len = 196;
 char *hello = "SUDOKU-solver by gedobbles   \n"
 "Format: x y n where x,y are coordinates (1-9) and n is the number.\n"
 "Enter x to exit.\n\n";
-int lh = 114;
+int lh = 115;
 
 char input[] = "12345678";
 
@@ -55,7 +55,7 @@ uint16_t dat[] = {511,511,511,511,511,511,511,511,511, \
       *((uint32_t*) input) = 0;    //read
       *(((uint32_t*) input) + 1) = 0;
       read(STDIN, input, 6);
-      print(input, 8);
+      print(input, 6);
       if(input[0] == 'x')
         break;
       if(input[0] == 'd'){
