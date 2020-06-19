@@ -23,12 +23,14 @@ void Sudoku::reset()
     callExec();
     childSkip(309);     //welcome message + empty field
     //test
+    /*
     printf("field\n");
     setNr('1','1','3');
     printf("field\n");
     setNr('9','9','9');
     printf("field\n");
     setNr('2','1','2');
+    */
 }
 
 char Sudoku::getNr(char x, char y)
