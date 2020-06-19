@@ -2,3 +2,4 @@ sudoku
 main.o*
 .gitsh
 sudoku_c
+build/*

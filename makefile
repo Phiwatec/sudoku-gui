@@ -16,3 +16,12 @@ main.obj: main.asm
 
 c: sudoku.c
 	gcc -o sudoku sudoku.c
+
+# sudoku-gui
+
+gui: .qt
+
+.qt:
+	cd build && qmake ../qt/qt.pro -spec linux-g++
+	cd build && make qmake_all
+	cd build && make
