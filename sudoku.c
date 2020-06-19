@@ -7,12 +7,12 @@ const int STDIN  = 0;
 char message[]  = "_ _ _  _ _ _  _ _ _ \n_ _ _  _ _ _  _ _ _ \n_ _ _  _ _ _  _ _ _ \n\n"
 "_ _ _  _ _ _  _ _ _ \n_ _ _  _ _ _  _ _ _ \n_ _ _  _ _ _  _ _ _ \n\n"
 "_ _ _  _ _ _  _ _ _ \n_ _ _  _ _ _  _ _ _ \n_ _ _  _ _ _  _ _ _ \n\n";
-int len = 196;
+int len = 193;
 
 char *hello = "SUDOKU-solver by gedobbles   \n"
 "Format: x y n where x,y are coordinates (1-9) and n is the number.\n"
 "Enter x to exit.\n\n";
-int lh = 115;
+int lh = 116;
 
 char input[] = "12345678";
 
