@@ -6,6 +6,7 @@ Sudoku::Sudoku()
     command = (char**)malloc(sizeof(char*)*2);
     command[0] = sudoku;
     command[1] = NULL;
+    childRunning = 0;
 }
 
 Sudoku::~Sudoku()
@@ -17,7 +18,76 @@ Sudoku::~Sudoku()
 
 void Sudoku::reset()
 {
+    if(childRunning)
+    {
+        killChild();
+    }
     callExec();
+    childSkip(116);     //welcome message
+}
+
+char Sudoku::getNr(char x, char y)
+{
+    return field[x][y];
+}
+
+void Sudoku::setNr(char x, char y, char n)
+{
+    if(!childRunning)
+    {
+        reset();
+    }
+    childWrite(x, y, n);
+    for(char i = 0;i<9;i++)
+    {
+        for(char j = 0;j<9;j++)
+        {
+            field[x][y] = childRead();
+            if(j>0 && j%3 == 0)
+            {
+                childSkip(1);
+            }
+        }
+    }
+}
+
+char Sudoku::childRead()
+{
+    char c;
+    while(read(fromChild, &c, 1)==0);
+#ifdef DBG
+    write(STDOUT_FILENO, &c, 1);
+#endif
+    return c;
+}
+
+void Sudoku::childSkip(int anz)
+{
+    for(int i = 0;i<anz;i++)
+    {
+        childRead();
+    }
+}
+
+void Sudoku::childWrite(char c)
+{
+    write(toChild, &c, 1);
+}
+
+void Sudoku::childWrite(char x, char y, char n)
+{
+    childWrite(x);
+    childWrite(x);
+    childWrite(y);
+    childWrite(y);
+    childWrite(n);
+    childWrite('\n');
+}
+
+void Sudoku::killChild()
+{
+    system("killall sudoku");
+    childRunning = 0;
 }
 
 int Sudoku::callExec()
@@ -58,9 +128,7 @@ int Sudoku::callExec()
       close(aStdoutPipe[PIPE_READ]);
       close(aStdoutPipe[PIPE_WRITE]);
 
-      // run child process image
-      // replace this with any exec* function find easier to use ("man exec")
-
+      // run sudoku
       childResult = execvp(command[0], command);
 
       // if we get here at all, an error occurred, but we are in the child
@@ -73,24 +141,10 @@ int Sudoku::callExec()
       close(aStdinPipe[PIPE_READ]);
       close(aStdoutPipe[PIPE_WRITE]);
 
-      // write
-      char message[] = "1 1 1\n";
-
-      //write(aStdinPipe[PIPE_WRITE], message, 6);
-
-
-      // read
-      char nChar;
-
-      while (read(aStdoutPipe[PIPE_READ], &nChar, 1) == 1) {
-        write(STDOUT_FILENO, &nChar, 1);
-      }
-
-
-      // done with these in this example program, you would normally keep these
-      // open of course as long as you want to talk to the child
-      close(aStdinPipe[PIPE_WRITE]);
-      close(aStdoutPipe[PIPE_READ]);
+      // keep as easier names
+      toChild = aStdinPipe[PIPE_WRITE];
+      fromChild = aStdoutPipe[PIPE_READ];
+      childRunning = 1;
     } else {
       // failed to create child
       close(aStdinPipe[PIPE_READ]);
